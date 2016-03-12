@@ -151,7 +151,7 @@ angular.module('conFusion.controllers', [])
     };
 }])
 
-.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', function($scope, $stateParams, menuFactory, baseURL) {
+.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', '$ionicPopover', 'favoriteFactory', '$ionicModal', function($scope, $stateParams, menuFactory, baseURL, $ionicPopover, favoriteFactory, $ionicModal) {
     $scope.baseURL = baseURL;
     $scope.dish = {};
     $scope.showDish = false;
@@ -168,6 +168,53 @@ angular.module('conFusion.controllers', [])
                     }
     );
 
+    $ionicPopover.fromTemplateUrl('templates/dish-detail-popover.html', {
+	scope: $scope
+    }).then(function(popover) {
+	$scope.detailPopover = popover;
+	$scope.comment = {};
+    });
+
+    $scope.openDetailPopover = function($event) {
+	$scope.detailPopover.show($event);
+    };
+
+    $scope.closeDetailPopover = function() {
+	$scope.detailPopover.hide();
+    };
+
+    $scope.addToFavorites = function() {
+        favoriteFactory.addToFavorites($scope.dish.id);
+	$scope.detailPopover.hide();
+    };
+
+    $ionicModal.fromTemplateUrl('templates/dish-comment.html', {
+	scope: $scope
+    }).then(function(modal) {
+	$scope.commentModal = modal;
+    });
+
+    $scope.openCommentModal = function() {
+	$scope.comment.rating="5";
+	$scope.commentModal.show();
+    };
+
+    $scope.closeCommentModal = function() {
+	$scope.commentModal.hide();
+    };
+
+    $scope.addComment = function() {
+	$scope.closeDetailPopover();
+	$scope.openCommentModal();
+    };
+
+    $scope.submitComment = function() {
+	$scope.comment.date = new Date().toISOString();;
+	$scope.dish.comments.push($scope.comment);
+	console.log( "submit", $scope.comment, $scope.dish );
+	$scope.commentModal.hide();
+//	dish.$save();
+    };
     
 }])
 

@@ -95,7 +95,9 @@ angular.module('confusionApp')
                             }
             );
 
-            
+            $scope.saveComment = function(c) {
+		console.log( "saving comment ", c );
+	    } 
         }])
 
         .controller('DishCommentController', ['$scope', 'menuFactory', function($scope,menuFactory) {
